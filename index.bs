@@ -1,0 +1,72 @@
+<pre class='metadata'>
+Title: Web Crypto Streams
+Shortname: webcrypto-streams
+Status: w3c/UD
+URL: https://owpacg.github.io/proposal-webcrypto-streams
+Repository: https://github.com/owpacg/proposal-webcrypto-streams
+Editor: Tobias Niessen, Cloudflare https://cloudflare.com/, tniessen@cloudflare.com
+Editor: Luca Casonato, Deno Land Inc https://deno.com/company, luca@deno.com
+Abstract: Streaming data support for the the Web Crypto API.
+Markup Shorthands: markdown yes
+</pre>
+
+Introduction {#intro}
+=====================
+
+*This section is non-normative.*
+
+Introduction!
+
+Use Cases {#use-cases}
+======================
+
+*This section is non-normative.*
+
+Elaborate on use cases here.
+
+Terminology {#terminology}
+==========================
+
+A chunk is a piece of data. In the case of EncryptionStream and VerificationStream, the output chunk type is Uint8Array. They accept any {{BufferSource}} type as input.
+
+A stream represents an ordered sequence of chunks. The terms {{ReadableStream}} and {{WritableStream}} are defined in [[!WHATWG-STREAMS]].
+
+A <dfn>encryption context</dfn> is the internal state maintained by a encryption algorithm. The contents of a <a>encryption context</a> depend on the algorithm and implementation in use. From the point of view of this specification, it is an opaque object. A <a>encryption context</a> is initially in a start state such that it anticipates the first byte of input.
+
+Interface `EncryptionStream` {#encryption-stream}
+=================================================
+
+Note: The {{EncryptionStream}} class complements {{SubtleCrypto}}.{{SubtleCrypto/encrypt()}}. The constructor takes the same arguments as {{SubtleCrypto}}.{{SubtleCrypto/encrypt()}} except for the data argument.
+
+<pre class="idl">
+[Exposed=*]
+interface EncryptionStream {
+  constructor(AlgorithmIdentifier algorithm, CryptoKey key);
+};
+EncryptionStream includes GenericTransformStream;
+</pre>
+
+A {{EncryptionStream}} has an associated <dfn for=EncryptionStream>algorithm</dfn>, <dfn for=EncryptionStream>key</dfn> and <a>encryption context</a> <dfn for=EncryptionStream>context</dfn>.
+
+The <dfn constructor for=EncryptionStream lt="EncryptionStream(algorithm, key)"><code>new EncryptionStream(|algorithm|, |key|)</code></dfn> steps are:
+    1. Let *normalizedAlgorithm* be the result of <a lt="normalize an algorithm">normalizing an algorithm</a>, with `alg` set to |algorithm| and `op` set to <code>"encrypt"</code>.
+        - Issue: normalize an algorithm doesn't link correctly (needs to be exported in Web Crypto API).
+    1. Set [=this=]'s <a for=EncryptionStream>algorithm</a> to *normalizedAlgorithm*.
+    1. Set [=this=]'s <a for=EncryptionStream>key</a> to |key|.
+    1. Let *transformAlgorithm* be an algorithm which takes a *chunk* argument and runs the <a>encrypt and enqueue a chunk</a> algorithm with [=this=] and *chunk*.
+    1. Let *flushAlgorithm* be an algorithm which takes no argument and runs the <a>encrypt flush and enqueue</a> algorithm with [=this=].
+    1. Set [=this=]'s [=GenericTransformStream/transform=] to a [=new=] {{TransformStream}}.
+    1. [=TransformStream/Set up=] [=this=]'s [=GenericTransformStream/transform=]  with <i>[=TransformStream/set up/transformAlgorithm=]</i> set to *transformAlgorithm* and <i>[=TransformStream/set up/flushAlgorithm=]</i> set to *flushAlgorithm*.
+
+The <dfn>encrypt and enqueue a chunk</dfn> algorithm, given a {{EncryptionStream}} object *stream* and a *chunk*, runs these steps:
+    1. If *chunk* is not a {{BufferSource}} type, then throw a {{TypeError}}.
+    1. Let *buffer* be the result of encrypting *chunk* with *stream*'s <a for=EncryptionStream>algorithm</a> and <a for=EncryptionStream>context</a>.
+    1. If *buffer* is empty, return.
+    1. Split *buffer* into one or more non-empty pieces and convert them into {{Uint8Array}}s.
+    1. For each {{Uint8Array}} *array*, [=TransformStream/enqueue=] *array* in *stream*'s [=GenericTransformStream/transform=].
+
+The <dfn>encrypt flush and enqueue</dfn> algorithm, which handles the end of data from the input {{ReadableStream}} object, given a {{EncryptionStream}} object *stream*, runs these steps:
+    1. Let *buffer* be the result of encrypting an empty input with *stream*'s <a for=EncryptionStream>algorithm</a> and <a for=EncryptionStream>context</a>, with the finish flag.
+    1. If *buffer* is empty, return.
+    1. Split *buffer* into one or more non-empty pieces and convert them into {{Uint8Array}}s.
+    1. For each {{Uint8Array}} *array*, [=TransformStream/enqueue=] *array* in *stream*'s [=GenericTransformStream/transform=].
