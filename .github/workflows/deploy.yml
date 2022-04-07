@@ -14,9 +14,12 @@ jobs:
         uses: actions/checkout@v2
 
       - uses: w3c/spec-prod@v2
+        with:
+          DESTINATION: out/index.html
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "proposal-webcrypto-streams"
           entrypoint: "https://deno.land/std@0.134.0/http/file_server.ts"
+          root: out/
