@@ -2,8 +2,8 @@
 Title: Web Crypto Streams
 Shortname: webcrypto-streams
 Status: w3c/UD
-URL: https://owpacg.github.io/proposal-webcrypto-streams
-Repository: https://github.com/owpacg/proposal-webcrypto-streams
+URL: https://proposal-webcrypto-streams.deno.dev/
+Repository: https://github.com/wintercg/proposal-webcrypto-streams
 Editor: Tobias Niessen, Cloudflare https://cloudflare.com/, tniessen@cloudflare.com
 Editor: Luca Casonato, Deno Land Inc https://deno.com/company, luca@deno.com
 Abstract: Streaming data support for the the Web Crypto API.
