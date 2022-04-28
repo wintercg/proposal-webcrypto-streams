@@ -3,7 +3,7 @@ Title: Web Crypto Streams
 Shortname: webcrypto-streams
 Status: w3c/CG-DRAFT
 Level: none
-URL: https://proposal-webcrypto-streams.deno.dev/
+URL: https://webcrypto-streams.proposal.wintercg.org/
 Repository: https://github.com/wintercg/proposal-webcrypto-streams
 Editor: Tobias Niessen, Cloudflare https://cloudflare.com/, tniessen@cloudflare.com
 Editor: Luca Casonato, Deno Land Inc https://deno.com/company, luca@deno.com
