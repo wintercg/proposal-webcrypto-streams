@@ -2,7 +2,7 @@
 Title: Web Crypto Streams
 Shortname: webcrypto-streams
 Group: wintercg
-Status: CG-DRAFT
+Status: w3c/CG-DRAFT
 Level: none
 URL: https://webcrypto-streams.proposal.wintercg.org/
 Repository: https://github.com/wintercg/proposal-webcrypto-streams
