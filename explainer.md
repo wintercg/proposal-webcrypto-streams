@@ -346,7 +346,7 @@ asynchronously.
 
   Algorithms that do not pre-hash their input include Ed25519 and Ed448. These
   are currently not supported by the Web Cryptography API but
-  [may be in the future](webcrypto-secure-curves). No streaming capabilities
+  [may be in the future][webcrypto-secure-curves]. No streaming capabilities
   should be added for such algorithms. Instead, pre-hashing variants of such
   algorithms should be considered for inclusion in the standard. For example,
   Ed25519ph and Ed448ph are pre-hashing variants of Ed25519 and Ed448,
